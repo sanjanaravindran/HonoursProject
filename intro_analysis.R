@@ -8,12 +8,12 @@ pacman::p_load(here, usethis, ggplot2, dplyr, magrittr, car)
 # Load the data (you can choose any name for the dataset but try to 
 # use a file name that is concise and descriptive; separating words 
 # with an underscore helps with readability. For instance, I use 
-# the name 'tl_par_lambs2011' to indicate what this dataset contains - TL 
+# the name 'lambs2011' to indicate what this dataset contains - TL 
 # and parasite data of lambs in the year 2011)
-tl_par_lambs2011 <- read.csv(here("RTL_Parasites_Lambs2011.csv"))
+lambs2011 <- read.csv(here("lambs2011.csv"))
 
 # Let's study the structure of this dataset. 
-str(tl_par_lambs2011)
+str(lambs2011)
 
 # You can now see what is in this dataset. We have 74 observations (rows)
 #  and 13 variables (columns). You can also click on 'Environment' and 
@@ -27,25 +27,25 @@ str(tl_par_lambs2011)
 # Let's look at the telomere data first. We first tell ggplot 
 #  where to look for the data. We then tell it to plot the TL data
 # on x axis and to plot a histogram 
-ggplot(tl_par_lambs2011, aes(x=RTL)) +
+ggplot(lambs2011, aes(x=RTL)) +
   geom_histogram()
 
 # How do you think the distribution of this data looks like 
 # Is this a normal distribution?
-ggplot(tl_par_lambs2011, aes(x=RTL)) +
+ggplot(lambs2011, aes(x=RTL)) +
   geom_density()
 
 # Let's look at the strongyle data next. How does this look?
 # Can you guess the distribution this most closely resembles?
-ggplot(tl_par_lambs2011, aes(x=Strongyles)) +
+ggplot(lambs2011, aes(x=Strongyles)) +
   geom_histogram()
 
-ggplot(tl_par_lambs2011, aes(x=Strongyles)) +
+ggplot(lambs2011, aes(x=Strongyles)) +
   geom_density()
 
 # As a simple exercise, let's try to find which lamb was found to have 
 # the least number of strongyles? 
-tl_par_lambs2011 %>%
+lambs2011 %>%
   filter(Strongyles == min(Strongyles))
 
 # Above, we first tell R where to look for the data by calling our 
@@ -61,7 +61,7 @@ tl_par_lambs2011 %>%
 
 # Since we are interested in the relationship between TL and Strongyles,
 # let us try to explore how both of them look together in a single plot
-ggplot(tl_par_lambs2011, aes(y=RTL, x=Strongyles)) +
+ggplot(lambs2011, aes(y=RTL, x=Strongyles)) +
   geom_point() +
   geom_line()
 
@@ -91,7 +91,7 @@ ggplot(tl_par_lambs2011, aes(y=RTL, x=Strongyles)) +
 # fit this model. Here, we are essentially trying to find a line/linear
 # equation that fits the data in the best way. 
 
-model1 <- lm(RTL ~ Strongyles, tl_par_lambs2011)
+model1 <- lm(RTL ~ Strongyles, lambs2011)
 
 summary(model1)
 
@@ -101,7 +101,7 @@ summary(model1)
 
 
 # Let's try to visualize this line
-ggplot(tl_par_lambs2011, aes(y=RTL, x=Strongyles)) +
+ggplot(lambs2011, aes(y=RTL, x=Strongyles)) +
   geom_point() +
   geom_smooth(method="lm", se=F)
 
@@ -118,7 +118,7 @@ summary(model1)$r.squared
 # reported across different species (although see a recent meta-analysis
 # Remot et al). Let us try to visualize the data again by colouring the
 # datapoints that correspond to males and females in different colours
-ggplot(tl_par_lambs2011, aes(x=RTL, colour=factor(Sex), fill=factor(Sex))) +
+ggplot(lambs2011, aes(x=RTL, colour=factor(Sex), fill=factor(Sex))) +
   geom_histogram() 
 
 # It seems that there may be some differences between male and female lambs
@@ -128,12 +128,12 @@ ggplot(tl_par_lambs2011, aes(x=RTL, colour=factor(Sex), fill=factor(Sex))) +
 # model. Since we would like 'Sex' to be a categoricalvariable with 2 categories,
 # 'Male' and 'Female', we first need to convert it into a 'factor' type instead 
 # of a 'character'(chr) type that it currently is.
-tl_par_lambs2011$Sex <- as.factor(tl_par_lambs2011$Sex)
-str(tl_par_lambs2011$Sex)
+lambs2011$Sex <- as.factor(lambs2011$Sex)
+str(lambs2011$Sex)
 
 # Let's run a multiple regression model by including Sex as another predictor to 
 # account for differences between the 2 sexes.
-model2 <- lm(RTL ~ Strongyles + Sex, tl_par_lambs2011)
+model2 <- lm(RTL ~ Strongyles + Sex, lambs2011)
 
 summary(model2)
 
@@ -147,13 +147,13 @@ summary(model2)$r.squared
 # Based on your reading, are you expecting to see sex-specific effects?
 # Let's visualize the relationship first. 
 
-ggplot(tl_par_lambs2011, aes(y=RTL, x=Strongyles, colour=factor(Sex))) +
+ggplot(lambs2011, aes(y=RTL, x=Strongyles, colour=factor(Sex))) +
   geom_point() +
   geom_smooth(method = "lm", se=F)
 
 # Let's run a multiple regression model to quantify the sex-specific relationship.
 
-model3 <- lm(RTL ~ Strongyles * Sex, tl_par_lambs2011)
+model3 <- lm(RTL ~ Strongyles * Sex, lambs2011)
 
 summary(model3)
 
